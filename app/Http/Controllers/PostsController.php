@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Post;
 class PostsController extends Controller
 {
-
+    //block guest from accessing other routes apart from index and show
     public function __construct()
     {
         $this->middleware('auth',['except'=>['index','show']]);
@@ -87,7 +87,7 @@ class PostsController extends Controller
 
         //check for correct user
         if(auth()->user()->id  !== $post->user_id){
-            return redirect('posts.edit');
+            return redirect('posts.index');
         };
         return view('posts.edit',[
             'post'=>$post
@@ -140,6 +140,9 @@ class PostsController extends Controller
         // };
         // return redirect(route('posts.index'));
         $post = Post::find($id);
+        if(auth()->user()->id  !== $post->user_id){
+            return redirect('posts.index');
+        };
          if($post->cover_image != 'noimage.jpg'){
             Storage::delete('public/cover_images/'.$post->cover_image);
         };
